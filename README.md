@@ -39,3 +39,7 @@ gnutomb/
     ├── INTRO.md          # High-level introduction to the project
     ├── TECHNICAL.md      # In-depth technical details (architecture, config, API)
     └── USAGE.md          # Guide for client developers using the MCP tools
+```
+pip install -r requirements.txt
+# OR using uv
+# uv pip install -r requirements.txt
