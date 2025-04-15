@@ -43,3 +43,35 @@ gnutomb/
 pip install -r requirements.txt
 # OR using uv
 # uv pip install -r requirements.txt
+
+
+Service User: Create a dedicated non-root user (e.g., gnutomb).
+GPG Key Setup (Crucial):
+As the service user, generate a GPG keypair specifically for this service.
+Recommendation: Use a key without a passphrase OR configure gpg-agent properly for the service user so passphrases aren't needed interactively.
+Example (passphraseless): gpg --batch --passphrase '' --quick-gen-key 'GnuTomb Service <gnutomb@localhost>' default default never
+Note the long Key ID or Fingerprint.
+Storage Directories:
+Create base paths for data and metadata (e.g., /var/lib/gnutomb/sessions, /var/lib/gnutomb/metadata).
+Set ownership to the service user (chown -R gnutomb:gnutomb /var/lib/gnutomb).
+Set strict permissions (chmod -R 700 /var/lib/gnutomb).
+Configure Service:
+Copy .env.example to .env.
+Edit .env: Set the correct SERVICE_GPG_KEYID (the key generated in step 4). Adjust STORAGE_BASE_PATH and METADATA_PATH if needed. Configure limits, TTL, logging, etc.
+Ensure .env permissions are strict (chmod 600 .env).
+Run the Service:
+# Ensure environment variables loaded (e.g., from .env or systemd EnvironmentFile)
+# Example using MCP CLI runner & SSE transport on port 8004
+mcp run server.py --transport sse --host 0.0.0.0 --port 8004
+Use code with caution.
+Bash
+(See install.sh and docs/TECHNICAL.md for systemd example).
+📖 Usage
+Interact with the service using an MCP client library. See docs/USAGE.md for the detailed API reference and workflow examples. Core flow: initialize -> store session_id -> upload/download/list/delete -> seal. Remember to Base64 encode/decode file content on the client side.
+🛠️ Technical Details & Limitations
+For in-depth information on architecture, configuration, API details, GPG handling, security considerations, and limitations, please refer to docs/TECHNICAL.md. Key limitations include reliance on file-based metadata (less robust than a DB) and the need for reliable GPG key management on the server.
+📜 Licensing
+GnuTomb MCP Service Code (This Project): Copyright (c) 2025 PYTHAI - Licensed under the Apache License 2.0. (Adjust if needed)
+Model Context Protocol (MCP) Specification & SDKs: Licensed under the Apache License 2.0.
+python-gnupg: Licensed under the GPLv3 or later. (Check project for specifics)
+Python Dependencies: Each dependency (pydantic, prometheus-client, etc.) carries its own open-source license (commonly MIT, Apache 2.0, BSD). Please consult the respective project licenses.
